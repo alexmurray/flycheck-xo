@@ -24,6 +24,21 @@ To enable then simply add the following to your init file:
   (flycheck-xo-setup))
 ```
 
+### Pallet
+
+If you use [Pallet](https://github.com/rdallasgray/pallet) to manage your emacs packages, add the following line to your `~/.emacs.d/Cask`:
+
+```emacs-lisp
+(depends-on "flycheck-xo" :git "https://github.com/alexmurray/flycheck-xo" :ref "master")
+```
+
+Then do `M-x pallet-install` in your emacs, and finally add this to your init file:
+
+```emacs-lisp
+(require 'flycheck-xo)
+(flycheck-xo-setup)
+```
+
 ### Manual
 
 If you would like to install the package manually, download or clone it and
