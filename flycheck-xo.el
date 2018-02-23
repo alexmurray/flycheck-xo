@@ -39,7 +39,7 @@
 
 (flycheck-def-args-var flycheck-xo-args xo)
 
-(defun flycheck-parse-xo (output checker buffer)
+(defun flycheck-xo-parse (output checker buffer)
   "Parse ESLint errors/warnings from JSON OUTPUT.
 CHECKER and BUFFER denote the CHECKER that returned OUTPUT and
 the BUFFER that was checked respectively.
@@ -70,7 +70,7 @@ See `https://github.com/sindresorhus/xo"
             (eval flycheck-xo-args)
             source)
   :standard-input t
-  :error-parser flycheck-parse-xo
+  :error-parser flycheck-xo-parse
   :modes (js-mode js2-mode js3-mode))
   :working-directory (lambda (_checker)
 	  "Look for a working directory to run CHECKER in."
