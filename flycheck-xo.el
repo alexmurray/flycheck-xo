@@ -39,33 +39,50 @@
 
 (flycheck-def-args-var flycheck-xo-args xo)
 
-(flycheck-define-checker xo
-  "A checker using xo.
+(defun flycheck-parse-xo (output checker buffer)
+  "Parse ESLint errors/warnings from JSON OUTPUT.
+CHECKER and BUFFER denote the CHECKER that returned OUTPUT and
+the BUFFER that was checked respectively.
+See URL `https://eslint.org' for more information about ESLint."
+  (mapcar (lambda (err)
+            (let-alist err
+              (flycheck-error-new-at
+               .line
+               .column
+               (pcase .severity
+                 (2 'error)
+                 (1 'warning)
+                 (_ 'warning))
+               .message
+               :id .ruleId
+               :checker checker
+               :buffer buffer
+               :filename (buffer-file-name buffer))))
+          (let-alist (caar (flycheck-parse-json output))
+            .messages)))
 
+(flycheck-define-checker xo
+ "A checker using xo.
 See `https://github.com/sindresorhus/xo"
   :command ("xo"
-            "--reporter=compact"
+            "--reporter=json"
+            "--stdin" "--stdin-filename" source-original
             (eval flycheck-xo-args)
             source)
-  :error-patterns ((error line-start
-                          (file-name) ": line " line ", col " column ", Error - "
-                          (message (one-or-more not-newline)
-                                   (zero-or-more "\n"
-                                                 (one-or-more " ")
-                                                 (one-or-more not-newline))) line-end)
-                   (warning line-start
-                            (file-name) ": line " line ", col " column ", Warning - "
-                            (message (one-or-more not-newline)
-                                     (zero-or-more "\n"
-                                                   (one-or-more " ")
-                                                   (one-or-more not-newline))) line-end))
+  :standard-input t
+  :error-parser flycheck-parse-xo
   :modes (js-mode js2-mode js3-mode))
+  :working-directory (lambda (_checker)
+	  "Look for a working directory to run CHECKER in."
+	  (and
+	   buffer-file-name
+	   (or (locate-dominating-file buffer-file-name "node_module")
+	       (locate-dominating-file buffer-file-name "package.json"))))
 
 ;;;###autoload
 (defun flycheck-xo-setup ()
   "Setup flycheck-xo.
-
-Add `xo' to `flycheck-checkers'."
+Add `javascript-xo' to `flycheck-checkers'."
   (interactive)
   ;; prepend to list
   (add-to-list 'flycheck-checkers 'xo))
