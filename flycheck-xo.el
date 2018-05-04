@@ -76,7 +76,7 @@ See `https://github.com/sindresorhus/xo"
 	  "Look for a working directory to run CHECKER in."
 	  (and
 	   buffer-file-name
-	   (or (locate-dominating-file buffer-file-name "node_module")
+	   (or (locate-dominating-file buffer-file-name "node_modules")
 	       (locate-dominating-file buffer-file-name "package.json"))))
 
 ;;;###autoload
