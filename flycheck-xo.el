@@ -71,7 +71,7 @@ See `https://github.com/sindresorhus/xo"
             source)
   :standard-input t
   :error-parser flycheck-xo-parse
-  :modes (js-mode js2-mode js2-jsx-mode js3-mode))
+  :modes (js-mode js2-mode js2-jsx-mode rjsx-mode js3-mode))
   :working-directory (lambda (_checker)
 	  "Look for a working directory to run CHECKER in."
 	  (and
